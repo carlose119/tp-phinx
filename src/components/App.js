@@ -1,12 +1,12 @@
 // Dependencies
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Layout, Menu, Breadcrumb } from 'antd';
 
 // Components
 import HeaderComponent from './Global/Header';
 import ContentComponent from './Global/Content';
 import FooterComponent from './Global/Footer';
-import { Layout, Menu, Breadcrumb } from 'antd';
 
 // Data
 import items from '../data/menu';
