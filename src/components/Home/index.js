@@ -10,6 +10,7 @@ import FormCars from './FormCars';
 
 // Assets
 import 'antd/dist/antd.css';
+import '../App.css';
 
 class Home extends Component {
 
@@ -22,6 +23,7 @@ class Home extends Component {
 
       uploadValue: 0,
       picture: null,
+      vehiculos: [],
 
       marca: null,
       ano: null,
@@ -40,7 +42,21 @@ class Home extends Component {
       login: false,
       user: '',
       password: '',
+      vehiculos: [],
     });
+
+    /*firebase.database().ref('vehiculos').on('child_added', snapshot => {
+      this.setState({
+        vehiculos: this.state.vehiculos.concat(snapshot.val())
+      });
+    });*/
+
+    firebase.database().ref('vehiculos_phinx').on('child_added', snapshot => {
+      this.setState({
+        vehiculos: this.state.vehiculos.concat(snapshot.val())
+      });
+    });
+
   }
 
   handleInputChange(e){
@@ -131,22 +147,21 @@ class Home extends Component {
     }, () => {
         // Subida completada
         // Obtenemos la URL del fichero almacenado en Firebase storage
-        // Obtenemos la referencia a nuestra base de datos 'pictures'
+        // Obtenemos la referencia a nuestra base de datos
         // Creamos un nuevo registro en ella
         // Guardamos la URL del enlace en la DB
-        /*const record = {
-        photoURL: this.state.user.photoURL,
-        displayName: this.state.user.displayName,
-        image: task.snapshot.downloadURL
+        const record = {
+          marca: this.state.marca,
+          ano: this.state.ano,
+          origen: this.state.origen,
+          velocidad: this.state.velocidad,
+          estado: this.state.estado,
+          foto: task.snapshot.downloadURL
         }
-        const dbRef = firebase.database().ref('pictures');
-        const newPicture = dbRef.push();
-        newPicture.set(record);*/
-
-        this.setState({
-            uploadValue: 100,
-            picture: task.snapshot.downloadURL
-        });
+        const dbRef = firebase.database().ref('/vehiculos_phinx');
+        const newRow = dbRef.push();
+        newRow.set(record);
+        
     });
 
   }
@@ -184,6 +199,7 @@ class Home extends Component {
     } else {
       return (
         <div>
+
           <h1>Login</h1>
           <FormCars 
             onUpload={ this.handleSubmitCars } 
@@ -198,6 +214,28 @@ class Home extends Component {
             inputVelocidad={this.state.velocidad}
             inputEstado={this.state.estado}
           />
+
+          {
+            this.state.vehiculos.map(vehiculo => (
+              <div className="App-card">
+                <figure className="App-card-image">
+                  
+                  <figcaption className="App-card-footer">
+                    <span className="App-card-name"><b>Marca: </b>{vehiculo.marca} | </span>
+                    <br/>
+                    <span className="App-card-name"><b>Año de fabricación: </b>{vehiculo.ano} | </span>
+                    <br/>
+                    <span className="App-card-name"><b>Origen (Pais): </b>{vehiculo.origen} | </span>
+                    <br/>
+                    <span className="App-card-name"><b>Velocidad máxima: </b>{vehiculo.velocidad} | </span>
+                    <br/>
+                    <span className="App-card-name"><b>Estado: </b>{vehiculo.estado}</span>
+                  </figcaption>
+                </figure>
+              </div>
+            )).reverse()
+          }
+
         </div>
       );
     }
