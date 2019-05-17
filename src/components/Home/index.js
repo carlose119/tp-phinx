@@ -7,6 +7,7 @@ import firebase from 'firebase';
 
 //component
 import FormCars from './FormCars';
+import ModalCars from './ModalCars';
 
 // Assets
 import 'antd/dist/antd.css';
@@ -31,10 +32,23 @@ class Home extends Component {
       velocidad: null,
       estado: null,
       file: null,
-
       descripcion: null,
       colores: null,
       puertas: null,
+
+      modal_id: null,
+      modal_marca: null,
+      modal_ano: null,
+      modal_origen: null,
+      modal_velocidad: null,
+      modal_estado: null,
+      modal_file: null,
+      modal_descripcion: null,
+      modal_colores: null,
+      modal_puertas: null,
+      modal_foto: null,
+
+      visible: false
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -321,6 +335,41 @@ class Home extends Component {
     }
 
   }
+  
+  showModal = (e) => {
+      this.setState({
+        visible: true       
+      });
+
+      const row = firebase.database().ref('vehiculos_phinx').child(e.target.value);
+      row.on('value', snapshot => {
+        this.setState({
+          modal_id: e.target.value,
+          modal_marca: snapshot.val().marca,     
+          modal_ano: snapshot.val().ano,     
+          modal_origen: snapshot.val().origen,     
+          modal_velocidad: snapshot.val().velocidad,     
+          modal_estado: snapshot.val().estado,     
+          modal_file: snapshot.val().file,     
+          modal_descripcion: snapshot.val().descripcion,     
+          modal_colores: snapshot.val().colores,     
+          modal_puertas: snapshot.val().puertas,     
+          modal_foto: snapshot.val().foto,     
+        });
+      });
+  };
+  handleOk = e => {
+      console.log(e);
+      this.setState({
+        visible: false,
+      });
+  };
+  handleCancel = e => {
+      console.log(e);
+      this.setState({
+        visible: false,
+      });
+  };
 
   renderHomeContent () {
     if(!this.state.login) {
@@ -443,7 +492,7 @@ class Home extends Component {
                         Activar/Desactivar 
                       </Button>
                       <Divider type="vertical" />
-                      <Button type="primary" ghost>
+                      <Button type="primary" ghost onClick={this.showModal} value={vehiculo.id} >
                         Detalle
                       </Button>
                       <Divider type="vertical" />
@@ -479,7 +528,23 @@ class Home extends Component {
 
           <Table columns={tableColumns} dataSource={tableData} />
 
-          {
+          <ModalCars 
+            visible={this.state.visible} 
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+            modal_id={this.state.modal_id}
+            modal_marca={this.state.modal_marca}
+            modal_ano={this.state.modal_ano}
+            modal_origen={this.state.modal_origen}
+            modal_velocidad={this.state.modal_velocidad}
+            modal_estado={this.state.modal_estado}
+            modal_descripcion={this.state.modal_descripcion}
+            modal_colores={this.state.modal_colores}
+            modal_puertas={this.state.modal_puertas}     
+            modal_foto={this.state.modal_foto}
+          />
+
+          {/*
             this.state.vehiculos.map(vehiculo => (
               <div className="App-card">
                 <figure className="App-card-image">
@@ -500,7 +565,7 @@ class Home extends Component {
                 </figure>
               </div>
             )).reverse()
-          }
+            */}
 
         </div>
       );
