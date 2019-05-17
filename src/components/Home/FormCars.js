@@ -63,6 +63,35 @@ class FormCars extends Component {
                             onChange={this.props.changeInput}
                         />
                     </Form.Item>
+
+                    <Form.Item>          
+                        <Input
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Descripción"
+                            value={this.props.inputDescripcion}
+                            id="inputDescripcion"
+                            onChange={this.props.changeInput}
+                        />
+                    </Form.Item>
+                    <Form.Item>          
+                        <Input
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Colores disponibles"
+                            value={this.props.inputColores}
+                            id="inputColores"
+                            onChange={this.props.changeInput}
+                        />
+                    </Form.Item>
+                    <Form.Item>          
+                        <Input
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                            placeholder="Cantidad de puertas"
+                            value={this.props.inputPuertas}
+                            id="inputPuertas"
+                            onChange={this.props.changeInput}
+                        />
+                    </Form.Item>
+
                     <Form.Item>          
                         <Input
                             prefix={<Icon type="file" style={{ color: 'rgba(0,0,0,.25)' }} />}

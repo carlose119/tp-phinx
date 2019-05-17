@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Table, Divider, Tag } from 'antd';
 import firebase from 'firebase';
 
 //component
@@ -30,7 +30,11 @@ class Home extends Component {
       origen: null,
       velocidad: null,
       estado: null,
-      file: null
+      file: null,
+
+      descripcion: null,
+      colores: null,
+      puertas: null,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -107,6 +111,25 @@ class Home extends Component {
             file: e.target.files[0]
         });
     }
+
+    if(e.target.id === 'inputDescripcion') {
+      this.setState({
+          descripcion: e.target.value
+      });
+    }
+
+    if(e.target.id === 'inputColores') {
+      this.setState({
+          colores: e.target.value
+      });
+    }
+
+    if(e.target.id === 'inputPuertas') {
+      this.setState({
+          puertas: e.target.value
+      });
+    }
+
   }
 
   handleSubmitLogin = e => {
@@ -185,11 +208,26 @@ class Home extends Component {
             origen: this.state.origen,
             velocidad: this.state.velocidad,
             estado: this.state.estado,
+            descripcion: this.state.descripcion,
+            colores: this.state.colores,
+            puertas: this.state.puertas,
             foto: this.state.picture
           }         
           const dbRef = firebase.database().ref('/vehiculos_phinx');
           const newRow = dbRef.push();
           newRow.set(record);
+
+          this.setState({
+            marca: null,
+            ano: null,
+            origen: null,
+            velocidad: null,
+            estado: null,
+            picture: null,
+            descripcion: null,
+            colores: null,
+            puertas: null,
+          });
 
         }, 3000);
         
@@ -229,6 +267,92 @@ class Home extends Component {
         </Form>
       );
     } else {
+
+      const tableColumns = [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          render: text => <a href="javascript:;">{text}</a>,
+        },
+        {
+          title: 'Age',
+          dataIndex: 'age',
+          key: 'age',
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address',
+        },
+        {
+          title: 'Tags',
+          key: 'tags',
+          dataIndex: 'tags',
+          render: tags => (
+            <span>
+              {tags.map(tag => {
+                let color = tag.length > 5 ? 'geekblue' : 'green';
+                if (tag === 'loser') {
+                  color = 'volcano';
+                }
+                return (
+                  <Tag color={color} key={tag}>
+                    {tag.toUpperCase()}
+                  </Tag>
+                );
+              })}
+            </span>
+          ),
+        },
+        {
+          title: 'Action',
+          key: 'action',
+          render: (text, record) => (
+            <span>
+              <a href="javascript:;">Invite {record.name}</a>
+              <Divider type="vertical" />
+              <a href="javascript:;">Delete</a>
+            </span>
+          ),
+        },
+      ];
+      
+      let tableData = [
+        {
+          key: '1',
+          name: 'John Brown',
+          age: 32,
+          address: 'New York No. 1 Lake Park',
+          tags: ['nice', 'developer'],
+        },
+        {
+          key: '2',
+          name: 'Jim Green',
+          age: 42,
+          address: 'London No. 1 Lake Park',
+          tags: ['loser'],
+        },
+        {
+          key: '3',
+          name: 'Joe Black',
+          age: 32,
+          address: 'Sidney No. 1 Lake Park',
+          tags: ['cool', 'teacher'],
+        },
+      ];
+
+      this.state.vehiculos.map(vehiculo => (
+        tableData.push({
+          key: vehiculo.marca,
+          name: vehiculo.marca,
+          age: vehiculo.marca,
+          address: vehiculo.marca,
+          tags: [vehiculo.marca],
+        })
+      ));  
+
+
       return (
         <div>
 
@@ -245,7 +369,12 @@ class Home extends Component {
             inputOrigen={this.state.origen}
             inputVelocidad={this.state.velocidad}
             inputEstado={this.state.estado}
+            inputDescripcion={this.state.descripcion}
+            inputColores={this.state.colores}
+            inputPuertas={this.state.puertas}
           />
+
+          <Table columns={tableColumns} dataSource={tableData} />
 
           {
             this.state.vehiculos.map(vehiculo => (
