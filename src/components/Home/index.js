@@ -39,6 +39,7 @@ class Home extends Component {
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmitCars = this.handleSubmitCars.bind(this);
+    this.handleChangeStatus = this.handleChangeStatus.bind(this);
   }
 
   componentDidMount(){
@@ -66,11 +67,61 @@ class Home extends Component {
           estado: snapshot.val().estado,
           descripcion: snapshot.val().descripcion,
           colores: snapshot.val().colores,
-          puertas: snapshot.val().puertas,        
+          puertas: snapshot.val().puertas,
+          status: snapshot.val().status,        
           foto: snapshot.val().foto
         })
       });
-    });   
+    });
+
+    firebase.database().ref('vehiculos_phinx').on('child_changed', snapshot => {
+      
+      /*this.state.vehiculos.map(function(name, index){
+        if(name.status != snapshot.val().status){
+          
+          this.setState({
+            vehiculos[index]: {
+              id: snapshot.key,
+              marca: snapshot.val().marca,
+              ano: snapshot.val().marca,
+              origen: snapshot.val().origen,
+              velocidad: snapshot.val().velocidad,
+              estado: snapshot.val().estado,
+              descripcion: snapshot.val().descripcion,
+              colores: snapshot.val().colores,
+              puertas: snapshot.val().puertas,
+              status: snapshot.val().status,        
+              foto: snapshot.val().foto
+            }
+          });
+
+        }
+      });*/
+
+      for (var i = 0; i < this.state.vehiculos.length; i++) {
+        if(this.state.vehiculos[i].id == snapshot.key && this.state.vehiculos[i].status != snapshot.val().status){
+
+          const some_array = [...this.state.vehiculos];
+          some_array[i] = {
+            id: snapshot.key,
+            marca: snapshot.val().marca,
+            ano: snapshot.val().marca,
+            origen: snapshot.val().origen,
+            velocidad: snapshot.val().velocidad,
+            estado: snapshot.val().estado,
+            descripcion: snapshot.val().descripcion,
+            colores: snapshot.val().colores,
+            puertas: snapshot.val().puertas,
+            status: snapshot.val().status,        
+            foto: snapshot.val().foto
+          };
+          this.setState({vehiculos:some_array});
+
+        }
+    }
+      
+      
+    });
 
   }
 
@@ -183,34 +234,10 @@ class Home extends Component {
         // Obtenemos la URL del fichero almacenado en Firebase storage
         // Obtenemos la referencia a nuestra base de datos
         // Creamos un nuevo registro en ella
-        // Guardamos la URL del enlace en la DB
-
-        /*task.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-          console.log('File available at', downloadURL);        
-        });*/        
+        // Guardamos la URL del enlace en la DB     
 
         task.snapshot.ref.getDownloadURL().then(url => this.setState({picture: url}));
-
-        /*const record = {
-          marca: this.state.marca,
-          ano: this.state.ano,
-          origen: this.state.origen,
-          velocidad: this.state.velocidad,
-          estado: this.state.estado,
-          foto: this.state.picture
-        }       
-
-        const dbRef = firebase.database().ref('/vehiculos_phinx');
-        const newRow = dbRef.push();
-        newRow.set(record);
-
-        const updateRow = newRow.child("/foto");        
-        setTimeout(() => {
-          updateRow.update({
-            foto: this.state.picture
-          });
-        }, 3000);*/        
-   
+           
         setTimeout(() => {
 
           const record = {
@@ -222,6 +249,7 @@ class Home extends Component {
             descripcion: this.state.descripcion,
             colores: this.state.colores,
             puertas: this.state.puertas,
+            status: 'Activo',
             foto: this.state.picture
           }         
           const dbRef = firebase.database().ref('/vehiculos_phinx');
@@ -249,6 +277,48 @@ class Home extends Component {
         
         
     });
+
+  }
+
+  handleDelete = (e) => {
+    //console.log('this is:', e.target.value);
+    const row = firebase.database().ref('vehiculos_phinx').child(e.target.value);
+    row.remove();
+  }
+  
+  handleChangeStatus (e) {
+    const row = firebase.database().ref('vehiculos_phinx').child(e.target.value);
+    /*row.on('value', snapshot => {
+      console.log('this estatus:', snapshot.val().status);  
+      if(snapshot.val().status === 'Activo'){        
+        row.update({
+          status: 'Inactivo',
+        });
+      }
+      if(snapshot.val().status === 'Inactivo'){
+        row.update({
+          status: 'Activo',
+        });        
+      }
+    }); */
+
+    if(e.target.id === 'Activo'){   
+      console.log('this estatus:', e.target.id);     
+      row.update({
+        status: 'Inactivo',
+      });
+      e.target.id = 'Inactivo';
+      return;
+    }
+
+    if(e.target.id === 'Inactivo'){   
+      console.log('this estatus:', e.target.id);     
+      row.update({
+        status: 'Activo',
+      });
+      e.target.id = 'Activo';
+      return;
+    }
 
   }
 
@@ -327,28 +397,37 @@ class Home extends Component {
           ),
         },
         {
-          title: 'Action',
+          title: 'Estatus',
+          dataIndex: 'estatus',
+          key: 'estatus',
+        },
+        {
+          title: 'Acciones',
+          dataIndex: 'acciones',
+          key: 'acciones',
+        },
+        /*{
+          title: 'Acciones',
           key: 'action',
           render: (text, record) => (
             <span>
-              <a href="javascript:;">Invite {record.marca}</a>
+              <Button type="primary" ghost onClick={this.handleChangeStatus(this, record.key)}>
+                Activar/Desactivar 
+              </Button>
               <Divider type="vertical" />
-              <a href="javascript:;">Delete</a>
+              <Button type="primary" ghost>
+                Detalle {record.marca}
+              </Button>
+              <Divider type="vertical" />
+              <Button type="danger" ghost>
+                Eliminar
+              </Button>
             </span>
           ),
-        },
+        },*/
       ];
       
-      let tableData = [
-        {
-          key: '1',
-          marca: 'John Brown',
-          ano: 32,
-          origen: 'New York No. 1 Lake Park',
-          velocidad: 32,
-          estado: ['nice', 'developer'],
-        },        
-      ];
+      let tableData = [];
 
       this.state.vehiculos.map(vehiculo => (
         tableData.push({
@@ -358,9 +437,24 @@ class Home extends Component {
           origen: vehiculo.origen,
           velocidad: vehiculo.velocidad,
           estado: [vehiculo.estado],
+          estatus: vehiculo.status,
+          acciones: <span>
+                      <Button type="primary" ghost onClick={this.handleChangeStatus} value={vehiculo.id} id={vehiculo.status}>
+                        Activar/Desactivar 
+                      </Button>
+                      <Divider type="vertical" />
+                      <Button type="primary" ghost>
+                        Detalle
+                      </Button>
+                      <Divider type="vertical" />
+                      <Button type="danger" ghost>
+                        Eliminar
+                      </Button>
+                    </span>,
         })
       ));
 
+      tableData.reverse();
 
       return (
         <div>
