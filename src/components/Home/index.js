@@ -150,17 +150,49 @@ class Home extends Component {
         // Obtenemos la referencia a nuestra base de datos
         // Creamos un nuevo registro en ella
         // Guardamos la URL del enlace en la DB
-        const record = {
+
+        /*task.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          console.log('File available at', downloadURL);        
+        });*/        
+
+        task.snapshot.ref.getDownloadURL().then(url => this.setState({picture: url}));
+
+        /*const record = {
           marca: this.state.marca,
           ano: this.state.ano,
           origen: this.state.origen,
           velocidad: this.state.velocidad,
           estado: this.state.estado,
-          foto: task.snapshot.downloadURL
-        }
+          foto: this.state.picture
+        }       
+
         const dbRef = firebase.database().ref('/vehiculos_phinx');
         const newRow = dbRef.push();
         newRow.set(record);
+
+        const updateRow = newRow.child("/foto");        
+        setTimeout(() => {
+          updateRow.update({
+            foto: this.state.picture
+          });
+        }, 3000);*/        
+   
+        setTimeout(() => {
+
+          const record = {
+            marca: this.state.marca,
+            ano: this.state.ano,
+            origen: this.state.origen,
+            velocidad: this.state.velocidad,
+            estado: this.state.estado,
+            foto: this.state.picture
+          }         
+          const dbRef = firebase.database().ref('/vehiculos_phinx');
+          const newRow = dbRef.push();
+          newRow.set(record);
+
+        }, 3000);
+        
         
     });
 
@@ -219,17 +251,19 @@ class Home extends Component {
             this.state.vehiculos.map(vehiculo => (
               <div className="App-card">
                 <figure className="App-card-image">
-                  
+                  <img width="320" src={vehiculo.foto} />
                   <figcaption className="App-card-footer">
-                    <span className="App-card-name"><b>Marca: </b>{vehiculo.marca} | </span>
-                    <br/>
-                    <span className="App-card-name"><b>Año de fabricación: </b>{vehiculo.ano} | </span>
-                    <br/>
-                    <span className="App-card-name"><b>Origen (Pais): </b>{vehiculo.origen} | </span>
-                    <br/>
-                    <span className="App-card-name"><b>Velocidad máxima: </b>{vehiculo.velocidad} | </span>
-                    <br/>
-                    <span className="App-card-name"><b>Estado: </b>{vehiculo.estado}</span>
+                    <span className="App-card-name">
+                      <b>Marca: </b>{vehiculo.marca}
+                      <br/>
+                      <b>Año de fabricación: </b>{vehiculo.ano}
+                      <br/>
+                      <b>Origen (Pais): </b>{vehiculo.origen}
+                      <br/>
+                      <b>Velocidad máxima: </b>{vehiculo.velocidad}
+                      <br/>
+                      <b>Estado: </b>{vehiculo.estado}
+                    </span>
                   </figcaption>
                 </figure>
               </div>
