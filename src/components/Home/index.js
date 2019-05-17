@@ -49,7 +49,7 @@ class Home extends Component {
       vehiculos: [],
     });
 
-    /*firebase.database().ref('vehiculos').on('child_added', snapshot => {
+    /*firebase.database().ref('vehiculos_phinx').on('child_added', snapshot => {
       this.setState({
         vehiculos: this.state.vehiculos.concat(snapshot.val())
       });
@@ -57,9 +57,20 @@ class Home extends Component {
 
     firebase.database().ref('vehiculos_phinx').on('child_added', snapshot => {
       this.setState({
-        vehiculos: this.state.vehiculos.concat(snapshot.val())
+        vehiculos: this.state.vehiculos.concat({
+          id: snapshot.key,
+          marca: snapshot.val().marca,
+          ano: snapshot.val().marca,
+          origen: snapshot.val().origen,
+          velocidad: snapshot.val().velocidad,
+          estado: snapshot.val().estado,
+          descripcion: snapshot.val().descripcion,
+          colores: snapshot.val().colores,
+          puertas: snapshot.val().puertas,        
+          foto: snapshot.val().foto
+        })
       });
-    });
+    });   
 
   }
 
@@ -217,6 +228,11 @@ class Home extends Component {
           const newRow = dbRef.push();
           newRow.set(record);
 
+          /*const updateRow = newRow.child("/id");        
+          updateRow.update({
+            id: newRow.key
+          });*/
+
           this.setState({
             marca: null,
             ano: null,
@@ -270,25 +286,30 @@ class Home extends Component {
 
       const tableColumns = [
         {
-          title: 'Name',
-          dataIndex: 'name',
-          key: 'name',
+          title: 'Marca',
+          dataIndex: 'marca',
+          key: 'marca',
           render: text => <a href="javascript:;">{text}</a>,
         },
         {
-          title: 'Age',
-          dataIndex: 'age',
-          key: 'age',
+          title: 'Año de fabricación',
+          dataIndex: 'ano',
+          key: 'ano',
         },
         {
-          title: 'Address',
-          dataIndex: 'address',
-          key: 'address',
+          title: 'Origen (Pais)',
+          dataIndex: 'origen',
+          key: 'origen',
         },
         {
-          title: 'Tags',
-          key: 'tags',
-          dataIndex: 'tags',
+          title: 'Velocidad máxima',
+          dataIndex: 'velocidad',
+          key: 'velocidad',
+        },
+        {
+          title: 'Estado',
+          key: 'estado',
+          dataIndex: 'estado',
           render: tags => (
             <span>
               {tags.map(tag => {
@@ -310,7 +331,7 @@ class Home extends Component {
           key: 'action',
           render: (text, record) => (
             <span>
-              <a href="javascript:;">Invite {record.name}</a>
+              <a href="javascript:;">Invite {record.marca}</a>
               <Divider type="vertical" />
               <a href="javascript:;">Delete</a>
             </span>
@@ -321,36 +342,24 @@ class Home extends Component {
       let tableData = [
         {
           key: '1',
-          name: 'John Brown',
-          age: 32,
-          address: 'New York No. 1 Lake Park',
-          tags: ['nice', 'developer'],
-        },
-        {
-          key: '2',
-          name: 'Jim Green',
-          age: 42,
-          address: 'London No. 1 Lake Park',
-          tags: ['loser'],
-        },
-        {
-          key: '3',
-          name: 'Joe Black',
-          age: 32,
-          address: 'Sidney No. 1 Lake Park',
-          tags: ['cool', 'teacher'],
-        },
+          marca: 'John Brown',
+          ano: 32,
+          origen: 'New York No. 1 Lake Park',
+          velocidad: 32,
+          estado: ['nice', 'developer'],
+        },        
       ];
 
       this.state.vehiculos.map(vehiculo => (
         tableData.push({
-          key: vehiculo.marca,
-          name: vehiculo.marca,
-          age: vehiculo.marca,
-          address: vehiculo.marca,
-          tags: [vehiculo.marca],
+          key: vehiculo.id,
+          marca: vehiculo.marca,
+          ano: vehiculo.ano,
+          origen: vehiculo.origen,
+          velocidad: vehiculo.velocidad,
+          estado: [vehiculo.estado],
         })
-      ));  
+      ));
 
 
       return (
