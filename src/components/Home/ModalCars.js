@@ -1,6 +1,6 @@
 // Dependencies
 import React, { Component } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
 
 // Assets
 import 'antd/dist/antd.css';

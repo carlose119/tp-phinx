@@ -48,7 +48,10 @@ class Home extends Component {
       modal_puertas: null,
       modal_foto: null,
 
-      visible: false
+      visible: false,
+      visibleAdd: false,
+
+      delete: []
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -132,8 +135,13 @@ class Home extends Component {
           this.setState({vehiculos:some_array});
 
         }
-    }
+      }
       
+      
+    });
+
+
+    firebase.database().ref('vehiculos_phinx').on('child_removed', snapshot => {
       
     });
 
@@ -287,6 +295,10 @@ class Home extends Component {
             puertas: null,
           });
 
+          this.setState({
+            visibleAdd: false,
+          });
+
         }, 3000);
         
         
@@ -368,6 +380,24 @@ class Home extends Component {
       console.log(e);
       this.setState({
         visible: false,
+      });
+  };
+
+  showModalAdd = (e) => {
+    this.setState({
+      visibleAdd: true       
+    });    
+  };
+  handleOkAdd = e => {
+      console.log(e);
+      this.setState({
+        visibleAdd: false,
+      });
+  };
+  handleCancelAdd = e => {
+      console.log(e);
+      this.setState({
+        visibleAdd: false,
       });
   };
 
@@ -496,7 +526,7 @@ class Home extends Component {
                         Detalle
                       </Button>
                       <Divider type="vertical" />
-                      <Button type="danger" ghost>
+                      <Button type="danger" ghost onClick={this.handleDelete} value={vehiculo.id}>
                         Eliminar
                       </Button>
                     </span>,
@@ -510,6 +540,10 @@ class Home extends Component {
 
           <h1>Login</h1>
           <FormCars 
+            visibleAdd={this.state.visibleAdd} 
+            onOkAdd={this.handleOkAdd}
+            onCancelAdd={this.handleCancelAdd}
+
             onUpload={ this.handleSubmitCars } 
             changeInput={this.handleInputChange}
 
@@ -526,6 +560,9 @@ class Home extends Component {
             inputPuertas={this.state.puertas}
           />
 
+          <Button type="primary" ghost onClick={this.showModalAdd} >
+            Agregar Vehiculo
+          </Button>
           <Table columns={tableColumns} dataSource={tableData} />
 
           <ModalCars 
