@@ -1,6 +1,5 @@
 // Dependencies
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Form, Icon, Input, Button, Table, Divider, Tag } from 'antd';
 import firebase from 'firebase';
 import _ from 'lodash';
@@ -117,7 +116,7 @@ class Home extends Component {
       });*/
 
       for (var i = 0; i < this.state.vehiculos.length; i++) {
-        if(this.state.vehiculos[i].id == snapshot.key && this.state.vehiculos[i].status != snapshot.val().status){
+        if(this.state.vehiculos[i].id === snapshot.key && this.state.vehiculos[i].status !== snapshot.val().status){
 
           const some_array = [...this.state.vehiculos];
           some_array[i] = {
@@ -144,7 +143,7 @@ class Home extends Component {
 
     firebase.database().ref('vehiculos_phinx').on('child_removed', snapshot => {
       for (var i = 0; i < this.state.vehiculos.length; i++) {
-        if(this.state.vehiculos[i].id == snapshot.key){
+        if(this.state.vehiculos[i].id === snapshot.key){
 
           const some_array = [...this.state.vehiculos];
           some_array[i] = {
@@ -342,7 +341,7 @@ class Home extends Component {
     let defaultInputUser = 'admin';
     let defaultInputPassword = 'admin';
 
-    if(this.state.user == defaultInputUser && this.state.password == defaultInputPassword) {
+    if(this.state.user === defaultInputUser && this.state.password === defaultInputPassword) {
       console.log('Login');
       this.setState({
         login: true
@@ -473,22 +472,26 @@ class Home extends Component {
         visible: true       
       });
 
-      const row = firebase.database().ref('vehiculos_phinx').child(e.target.value);
-      row.on('value', snapshot => {
-        this.setState({
-          modal_id: e.target.value,
-          modal_marca: snapshot.val().marca,     
-          modal_ano: snapshot.val().ano,     
-          modal_origen: snapshot.val().origen,     
-          modal_velocidad: snapshot.val().velocidad,     
-          modal_estado: snapshot.val().estado,     
-          modal_file: snapshot.val().file,     
-          modal_descripcion: snapshot.val().descripcion,     
-          modal_colores: snapshot.val().colores,     
-          modal_puertas: snapshot.val().puertas,     
-          modal_foto: snapshot.val().foto,     
+      if(e.target.value !== null){
+        const row = firebase.database().ref('vehiculos_phinx').child(e.target.value);
+        row.on('value', snapshot => {
+          if(snapshot.val()){
+            this.setState({
+              modal_id: e.target.value,
+              modal_marca: snapshot.val().marca,     
+              modal_ano: snapshot.val().ano,     
+              modal_origen: snapshot.val().origen,     
+              modal_velocidad: snapshot.val().velocidad,     
+              modal_estado: snapshot.val().estado,     
+              modal_file: snapshot.val().file,     
+              modal_descripcion: snapshot.val().descripcion,     
+              modal_colores: snapshot.val().colores,     
+              modal_puertas: snapshot.val().puertas,     
+              modal_foto: snapshot.val().foto,     
+            });
+          }
         });
-      });
+      }
   };
   handleOk = e => {
       console.log(e);
@@ -558,7 +561,6 @@ class Home extends Component {
           title: 'Marca',
           dataIndex: 'marca',
           key: 'marca',
-          render: text => <a href="javascript:;">{text}</a>,
         },
         {
           title: 'Año de fabricación',
@@ -629,7 +631,7 @@ class Home extends Component {
       let tableData = [];
 
       this.state.vehiculos.map(vehiculo => (
-        vehiculo.id != 'null' ?
+        vehiculo.id !== 'null' ?
           tableData.push({
             key: vehiculo.id,
             marca: vehiculo.marca,

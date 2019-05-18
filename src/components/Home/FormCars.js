@@ -1,13 +1,12 @@
 // Dependencies
 import React, { Component } from 'react';
-import firebase from 'firebase';
 import { Form, Icon, Input, Button, Modal } from 'antd';
 
 // Assets
 import 'antd/dist/antd.css';
 
 class FormCars extends Component {
-    
+
     render () {
         return (
             <div>

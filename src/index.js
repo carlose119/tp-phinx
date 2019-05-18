@@ -9,8 +9,6 @@ import AppRoutes from './routes';
 
 // Assets
 import './index.css';
-import App from './components/App';
-import * as serviceWorker from './serviceWorker';
 
 firebase.initializeApp({
   apiKey: "AIzaSyCqdWPA-nYWuzgcdS8bgUMzy-ZK420vZPY",
