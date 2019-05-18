@@ -1,6 +1,6 @@
 // Dependencies
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Table, Divider, Tag } from 'antd';
+import { Form, Icon, Input, Button, Table, Divider, Tag, Modal } from 'antd';
 import firebase from 'firebase';
 import _ from 'lodash';
 
@@ -49,6 +49,7 @@ class Home extends Component {
 
       visible: false,
       visibleAdd: false,
+      visibleAlertLogin: false,
 
       delete: []
     };
@@ -347,7 +348,10 @@ class Home extends Component {
         login: true
       });
     }else{
-      console.log('Error');
+      console.log('Error');  
+      this.setState({
+        visibleAlertLogin: true,
+      });    
     }
     
   };
@@ -524,35 +528,59 @@ class Home extends Component {
       });
   };
 
+  handleOkAlertLogin = e => {
+      console.log(e);
+      this.setState({
+        visibleAlertLogin: false,
+      });
+  };
+  handleCancelAlertLogin = e => {
+      console.log(e);
+      this.setState({
+        visibleAlertLogin: false,
+      });
+  };
+
   renderHomeContent () {
     if(!this.state.login) {
       return (
-        <Form onSubmit={this.handleSubmitLogin} className="login-form">
-          <Form.Item>          
-              <Input
-                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                placeholder="Username"
-                value={this.state.user}
-                id="inputUser"
-                onChange={this.handleInputChange}
-              />
-          </Form.Item>
-          <Form.Item>          
-              <Input
-                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                type="password"
-                placeholder="Password"
-                value={this.state.password}
-                id="inputPassword"
-                onChange={this.handleInputChange}
-              />          
-          </Form.Item>
-          <Form.Item>          
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              Log in
-            </Button>         
-          </Form.Item>
-        </Form>
+        <div>
+          <Form onSubmit={this.handleSubmitLogin} className="login-form">
+            <Form.Item>          
+                <Input
+                  prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  placeholder="Username"
+                  value={this.state.user}
+                  id="inputUser"
+                  onChange={this.handleInputChange}
+                />
+            </Form.Item>
+            <Form.Item>          
+                <Input
+                  prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  type="password"
+                  placeholder="Password"
+                  value={this.state.password}
+                  id="inputPassword"
+                  onChange={this.handleInputChange}
+                />          
+            </Form.Item>
+            <Form.Item>          
+              <Button type="primary" htmlType="submit" className="login-form-button">
+                Log in
+              </Button>         
+            </Form.Item>
+          </Form>
+
+          <Modal
+            title="Usuario Invalido"
+            visible={this.state.visibleAlertLogin}
+            onOk={this.handleOkAlertLogin}
+            onCancel={this.handleCancelAlertLogin}
+          >
+            <p>Las Credenciales ingresadas no son validas.</p>
+          </Modal>
+        </div>
       );
     } else {
 
@@ -662,7 +690,7 @@ class Home extends Component {
       return (
         <div>
 
-          <h1>Login</h1>
+          <h1>Lista de Vehiculos</h1>
           <FormCars 
             visibleAdd={this.state.visibleAdd} 
             onOkAdd={this.handleOkAdd}
