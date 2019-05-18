@@ -1,9 +1,9 @@
 // Dependencies
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Form, Icon, Input, Button, Table, Divider, Tag } from 'antd';
 import firebase from 'firebase';
+import _ from 'lodash';
 
 //component
 import FormCars from './FormCars';
@@ -57,6 +57,7 @@ class Home extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmitCars = this.handleSubmitCars.bind(this);
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
+    this.recargarListaVehiculos = this.recargarListaVehiculos.bind(this);
   }
 
   componentDidMount(){
@@ -78,7 +79,7 @@ class Home extends Component {
         vehiculos: this.state.vehiculos.concat({
           id: snapshot.key,
           marca: snapshot.val().marca,
-          ano: snapshot.val().marca,
+          ano: snapshot.val().ano,
           origen: snapshot.val().origen,
           velocidad: snapshot.val().velocidad,
           estado: snapshot.val().estado,
@@ -122,7 +123,7 @@ class Home extends Component {
           some_array[i] = {
             id: snapshot.key,
             marca: snapshot.val().marca,
-            ano: snapshot.val().marca,
+            ano: snapshot.val().ano,
             origen: snapshot.val().origen,
             velocidad: snapshot.val().velocidad,
             estado: snapshot.val().estado,
@@ -142,8 +143,127 @@ class Home extends Component {
 
 
     firebase.database().ref('vehiculos_phinx').on('child_removed', snapshot => {
-      
+      for (var i = 0; i < this.state.vehiculos.length; i++) {
+        if(this.state.vehiculos[i].id == snapshot.key){
+
+          const some_array = [...this.state.vehiculos];
+          some_array[i] = {
+            id: 'null',
+            marca: 'null',
+            ano: 'null',
+            origen: 'null',
+            velocidad: 'null',
+            estado: 'null',
+            descripcion: 'null',
+            colores: 'null',
+            puertas: 'null',
+            status: 'null',        
+            foto: 'null'
+          };
+          this.setState({vehiculos:some_array});
+          //break;
+
+        }
+
+        /*if(this.state.vehiculos.includes(snapshot.key)) {
+          this.setState({
+            vehiculos: this.state.vehiculos.concat({
+              id: snapshot.key,
+              marca: snapshot.val().marca,
+              ano: snapshot.val().marca,
+              origen: snapshot.val().origen,
+              velocidad: snapshot.val().velocidad,
+              estado: snapshot.val().estado,
+              descripcion: snapshot.val().descripcion,
+              colores: snapshot.val().colores,
+              puertas: snapshot.val().puertas,
+              status: snapshot.val().status,        
+              foto: snapshot.val().foto
+            })
+          });
+        }*/
+
+        /*this.setState({
+          delete: this.state.delete.concat({
+            id: snapshot.key,
+            marca: snapshot.val().marca,
+            ano: snapshot.val().ano,
+            origen: snapshot.val().origen,
+            velocidad: snapshot.val().velocidad,
+            estado: snapshot.val().estado,
+            descripcion: snapshot.val().descripcion,
+            colores: snapshot.val().colores,
+            puertas: snapshot.val().puertas,
+            status: snapshot.val().status,        
+            foto: snapshot.val().foto
+          })
+        });
+
+        setTimeout(() => {          
+
+          this.setState({
+            vehiculos: this.state.delete,
+          });
+
+        }, 3000);*/
+
+      }
     });
+    //firebase.database().ref('vehiculos_phinx').on('child_removed', this.recargarListaVehiculos);
+
+  }
+
+  recargarListaVehiculos (){
+    console.log('recargando lista de vehiculos');
+
+    this.setState({
+      delete: [],
+    });
+
+    const row = firebase.database().ref('vehiculos_phinx');    
+    row.on("value", function(snapshot) {
+      console.log(snapshot.val());
+
+      /*snapshot.forEach(function(data) {
+        console.log("The " + data.key + " dinosaur's score is " + data.val().marca);
+
+        this.setState({
+          delete: this.state.delete.concat({
+            id: data.key,
+            marca: data.val().marca,
+            ano: data.val().ano,
+            origen: data.val().origen,
+            velocidad: data.val().velocidad,
+            estado: data.val().estado,
+            descripcion: data.val().descripcion,
+            colores: data.val().colores,
+            puertas: data.val().puertas,
+            status: data.val().status,        
+            foto: data.val().foto
+          })
+        });
+
+      });*/
+
+      let messagesVal = snapshot.val();
+      let messages = _(messagesVal)
+                      .keys()
+                      .map(messageKey => {
+                        let cloned = _.clone(messagesVal[messageKey]);
+                        cloned.key = messageKey;
+                        return cloned;
+                      }).value();
+      this.setState({
+        delete: messages
+      });
+
+      this.setState({
+        vehiculos: this.state.delete,
+      });
+
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });        
 
   }
 
@@ -509,28 +629,30 @@ class Home extends Component {
       let tableData = [];
 
       this.state.vehiculos.map(vehiculo => (
-        tableData.push({
-          key: vehiculo.id,
-          marca: vehiculo.marca,
-          ano: vehiculo.ano,
-          origen: vehiculo.origen,
-          velocidad: vehiculo.velocidad,
-          estado: [vehiculo.estado],
-          estatus: vehiculo.status,
-          acciones: <span>
-                      <Button type="primary" ghost onClick={this.handleChangeStatus} value={vehiculo.id} id={vehiculo.status}>
-                        Activar/Desactivar 
-                      </Button>
-                      <Divider type="vertical" />
-                      <Button type="primary" ghost onClick={this.showModal} value={vehiculo.id} >
-                        Detalle
-                      </Button>
-                      <Divider type="vertical" />
-                      <Button type="danger" ghost onClick={this.handleDelete} value={vehiculo.id}>
-                        Eliminar
-                      </Button>
-                    </span>,
-        })
+        vehiculo.id != 'null' ?
+          tableData.push({
+            key: vehiculo.id,
+            marca: vehiculo.marca,
+            ano: vehiculo.ano,
+            origen: vehiculo.origen,
+            velocidad: vehiculo.velocidad,
+            estado: [vehiculo.estado],
+            estatus: vehiculo.status,
+            acciones: <span>
+                        <Button type="primary" ghost onClick={this.handleChangeStatus} value={vehiculo.id} id={vehiculo.status}>
+                          Activar/Desactivar 
+                        </Button>
+                        <Divider type="vertical" />
+                        <Button type="primary" ghost onClick={this.showModal} value={vehiculo.id} >
+                          Detalle
+                        </Button>
+                        <Divider type="vertical" />
+                        <Button type="danger" ghost onClick={this.handleDelete} value={vehiculo.id}>
+                          Eliminar
+                        </Button>
+                      </span>,
+          })
+        : ''
       ));
 
       tableData.reverse();
