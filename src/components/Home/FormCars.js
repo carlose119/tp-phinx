@@ -34,6 +34,7 @@ class FormCars extends Component {
                                 value={this.props.inputMarca}
                                 id="inputMarca"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
                         <Form.Item>          
@@ -43,6 +44,7 @@ class FormCars extends Component {
                                 value={this.props.inputAno}
                                 id="inputAno"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
                         <Form.Item>          
@@ -52,6 +54,7 @@ class FormCars extends Component {
                                 value={this.props.inputOrigen}
                                 id="inputOrigen"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
                         <Form.Item>          
@@ -61,6 +64,7 @@ class FormCars extends Component {
                                 value={this.props.inputVelocidad}
                                 id="inputVelocidad"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
                         <Form.Item>          
@@ -70,6 +74,7 @@ class FormCars extends Component {
                                 value={this.props.inputEstado}
                                 id="inputEstado"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
 
@@ -80,6 +85,7 @@ class FormCars extends Component {
                                 value={this.props.inputDescripcion}
                                 id="inputDescripcion"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
                         <Form.Item>          
@@ -89,6 +95,7 @@ class FormCars extends Component {
                                 value={this.props.inputColores}
                                 id="inputColores"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
                         <Form.Item>          
@@ -98,6 +105,7 @@ class FormCars extends Component {
                                 value={this.props.inputPuertas}
                                 id="inputPuertas"
                                 onChange={this.props.changeInput}
+                                required
                             />
                         </Form.Item>
 
@@ -109,6 +117,7 @@ class FormCars extends Component {
                                 id="inputFile"
                                 //onChange={this.handelUpload}
                                 onChange={this.props.changeInput}
+                                required
                             />          
                         </Form.Item>
                         <Form.Item>          
